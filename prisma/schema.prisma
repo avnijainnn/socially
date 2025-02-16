@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  username  String    @unique
+  clerkId   String    @unique
+  name      String?
+  bio       String?
+  skills    String?
+  image     String?
+  location  String?
+  website   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  posts        Post[]
+  blogs     Blog[]
+  startups Startup[] // A user can create multiple startups
+  comments     Comment[]
+  likes        Like[]
+  advices      Advice[]
+  replies      Reply[]
+  reputations  Reputation[]
+  notifications Notification[] @relation("userNotifications")
+  notificationsCreated Notification[] @relation("notificationCreator")
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  authorId  String
+  content   String?
+  image     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments    Comment[]
+  likes       Like[]
+  notifications Notification[]
+}
+
+model Comment {
+  id        String    @id @default(cuid())
+  content   String
+  authorId  String
+  postId    String
+  createdAt DateTime  @default(now())
+
+  // Relations
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  notifications Notification[]
+
+  @@index([authorId, postId])
+}
+
+model Like {
+  id        String    @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime  @default(now())
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([userId, postId])
+  @@unique([userId, postId])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  creatorId String
+  type      NotificationType
+  read      Boolean   @default(false)
+  postId    String?
+  adviceId    String?
+  commentId String?
+  replyId   String?
+  createdAt DateTime  @default(now())
+
+  // Relations
+  user      User      @relation("userNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  creator   User      @relation("notificationCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  post      Post?     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment   Comment?  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  reply     Reply?    @relation(fields: [replyId], references: [id], onDelete: Cascade)
+  advice    Advice?   @relation(fields: [adviceId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+enum NotificationType {
+  LIKE
+  COMMENT
+  REPLY 
+  REPUTATION
+}
+
+model Reply {
+  id        String    @id @default(cuid())
+  content   String
+  authorId  String
+  adviceId  String
+  createdAt DateTime  @default(now())
+
+  // Relations
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  advice      Advice     @relation(fields: [adviceId], references: [id], onDelete: Cascade)
+  notifications Notification[]
+
+  @@index([authorId, adviceId])
+}
+
+model Reputation {
+  id        String    @id @default(cuid())
+  adviceId  String
+  userId    String
+  createdAt DateTime  @default(now())
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  advice    Advice     @relation(fields: [adviceId], references: [id], onDelete: Cascade)
+
+  @@index([userId, adviceId])
+  @@unique([userId, adviceId])
+}
+
+model Advice {
+  id        String    @id @default(cuid())
+  authorId  String
+  content   String?
+  image     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  tags      String[]  // Add tags as an array of strings
+
+  // Relations
+  author      User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  replies     Reply[]
+  reputations Reputation[]
+  notifications Notification[]
+}
+
+model Startup {
+  id          String    @id @default(cuid())
+  title       String
+  description String
+  category    String
+  image       String?
+  views       Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  authorId   String
+  author     User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+}
+
+model Blog {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String
+  image       String?
+  views       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([authorId])
+  @@index([views])
+}
+
+model Project {
+  id            String  @id @default(uuid())
+  title         String
+  description   String
+  github        String? // Optional unless collaboration is true
+  live          String
+  collaboration Boolean
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
