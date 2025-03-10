@@ -76,24 +76,14 @@ export async function toggleView(blogId: string) {
   }
 }
 
-//import prisma from "@/lib/prisma"; // Ensure Prisma client is correctly set up
-
 export async function getBlogById(id: string) {
   try {
-    const blog = await prisma.blog.findUnique({
+    return await prisma.blog.findUnique({
       where: { id },
       include: {
-        author: { // Include author details if you have an author relation
-          select: {
-            id: true,
-            name: true,
-            image: true,
-          },
-        },
+        author: true,
       },
     });
-
-    return blog;
   } catch (error) {
     console.error("Error fetching blog:", error);
     return null;

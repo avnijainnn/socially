@@ -201,12 +201,12 @@ function MobileNavbar() {
       label: "Internships",
       requireAuth: true,
     },
-    {
-      href: "/events",
-      icon: Calendar,
-      label: "Tech Events",
-      requireAuth: true,
-    },
+    // {
+    //   href: "/events",
+    //   icon: Calendar,
+    //   label: "Tech Events",
+    //   requireAuth: true,
+    // },
     {
       href: "/advice",
       icon: HelpCircle,

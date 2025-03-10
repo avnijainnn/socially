@@ -89,7 +89,7 @@ function CreateAdvice({ adviceId, isReply = false, onReplySubmit }: { adviceId?:
               <AvatarImage src={user?.imageUrl || "/avatar.png"} />
             </Avatar>
             <Textarea
-              placeholder={isReply ? "Write a reply..." : "Share your advice..."}
+              placeholder={isReply ? "Write a reply..." : "Ask for advice..."}
               className="min-h-[100px] resize-none border-none focus-visible:ring-0 p-0 text-base"
               value={content}
               onChange={(e) => setContent(e.target.value)}

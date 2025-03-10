@@ -93,8 +93,6 @@ export async function getUserPosts(userId: string) {
   }
 }
 
-
-
 export async function getUserLikedPosts(userId: string) {
   try {
     const likedPosts = await prisma.post.findMany({

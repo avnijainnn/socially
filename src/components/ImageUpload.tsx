@@ -1,39 +1,53 @@
 "use client";
 
 import { UploadDropzone } from "@/lib/uploadthing";
-import { XIcon } from "lucide-react";
+import { X } from "lucide-react";
+import Image from "next/image";
 
 interface ImageUploadProps {
-  onChange: (url: string) => void;
-  value: string;
   endpoint: "postImage";
+  value: string;
+  onChange: (url?: string) => void;
 }
 
-function ImageUpload({ endpoint, onChange, value }: ImageUploadProps) {
+export default function ImageUpload({
+  endpoint,
+  value,
+  onChange
+}: ImageUploadProps) {
   if (value) {
     return (
-      <div className="relative size-40">
-        <img src={value} alt="Upload" className="rounded-md size-40 object-cover" />
+      <div className="relative h-48 mt-4">
+        <Image
+          src={value}
+          alt="Upload"
+          className="rounded-md object-cover"
+          layout="fill"
+        />
         <button
           onClick={() => onChange("")}
-          className="absolute top-0 right-0 p-1 bg-red-500 rounded-full shadow-sm"
+          className="absolute top-0 right-0 p-1 bg-red-500 text-white rounded-full shadow-sm"
           type="button"
         >
-          <XIcon className="h-4 w-4 text-white" />
+          <X className="h-4 w-4" />
         </button>
       </div>
     );
   }
+
   return (
     <UploadDropzone
       endpoint={endpoint}
       onClientUploadComplete={(res) => {
-        onChange(res?.[0].url);
+        if (res && res.length > 0) {
+          onChange(res[0].url);
+        } else {
+          console.error("Upload failed: No response from server");
+        }
       }}
       onUploadError={(error: Error) => {
-        console.log(error);
+        console.error("Upload error:", error);
       }}
     />
   );
 }
-export default ImageUpload;

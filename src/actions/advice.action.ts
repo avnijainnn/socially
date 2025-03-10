@@ -222,12 +222,13 @@ export async function toggleReputation(adviceId: string) {
       select: { authorId: true },
     });
 
+    
     if (!advice) {
       return { success: false, error: "Advice not found" };
     }
 
     if (existingReputation) {
-      // Remove reputation
+      // unlike
       await prisma.reputation.delete({
         where: {
           userId_adviceId: {
@@ -237,26 +238,62 @@ export async function toggleReputation(adviceId: string) {
         },
       });
     } else {
-      // Add reputation
-      await prisma.reputation.create({
-        data: {
-          userId,
-          adviceId,
-        },
-      });
-
-      // Only create notification if giving reputation to someone else's advice
-      if (advice.authorId !== userId) {
-        await prisma.notification.create({
+      // like and create notification (only if liking someone else's post)
+      await prisma.$transaction([
+        prisma.reputation.create({
           data: {
-            type: "REPUTATION",
-            userId: advice.authorId,
-            creatorId: userId,
+            userId,
             adviceId,
           },
-        });
-      }
+        }),
+        ...(advice.authorId !== userId
+          ? [
+              prisma.notification.create({
+                data: {
+                  type: "LIKE",
+                  userId: advice.authorId, // recipient (post author)
+                  creatorId: userId, // person who liked
+                  adviceId,
+                },
+              }),
+            ]
+          : []),
+      ]);
     }
+
+    
+
+    // if (existingReputation) {
+    //   // Remove reputation
+    //   await prisma.reputation.delete({
+    //     where: {
+    //       userId_adviceId: {
+    //         userId,
+    //         adviceId,
+    //       },
+    //     },
+    //   });
+    // } else {
+    //   // Add reputation
+    //   await prisma.reputation.create({
+    //     data: {
+    //       userId,
+    //       adviceId,
+    //     },
+    //   });
+
+    //   // Only create notification if giving reputation to someone else's advice
+    //   if (advice.authorId !== userId) {
+    //     await prisma.notification.create({
+    //       data: {
+    //         type: "REPUTATION",
+    //         userId: advice.authorId,
+    //         creatorId: userId,
+    //         adviceId,
+    //       },
+    //     });
+    //   }
+    // }
 
     // Make sure to revalidate both paths
     revalidatePath("/advice");

@@ -197,3 +197,44 @@ model Project {
   updatedAt     DateTime @updatedAt
 }
 
+
+
+model Internship {
+  id          String    @id @default(cuid())
+  title       String
+  company     String
+  description String
+  location    String
+  salary      Float?
+  applyUrl    String?
+  startDate   DateTime?
+  endDate     DateTime?
+  userId      String
+  
+  // Which year students can apply
+  eligibleYears YearEligibility[]
+  
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model YearEligibility {
+  id           String     @id @default(cuid())
+  year         Year
+  internship   Internship @relation(fields: [internshipId], references: [id], onDelete: Cascade)
+  internshipId String
+
+  @@unique([internshipId, year])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Year {
+  FIRST
+  SECOND
+  THIRD
+  FOURTH
+}

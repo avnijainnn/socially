@@ -130,59 +130,36 @@ function ProfilePageClient({
                 <p className="mt-2 text-sm">{user.bio}</p>
 
                 {/* PROFILE STATS */}
-                <div className="w-full mt-6">
-                  <div className="flex justify-between mb-4">
-                    <div>
-                      <div className="font-semibold">
-                        {user._count.blogs.toLocaleString()}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Following
-                      </div>
-                    </div>
-                    <Separator orientation="vertical" />
-                    <div>
-                      <div className="font-semibold">
-                        {user._count.advices.toLocaleString()}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        Followers
-                      </div>
-                    </div>
-                    <Separator orientation="vertical" />
-                    <div>
-                      <div className="font-semibold">
-                        {user._count.posts.toLocaleString()}
-                      </div>
-                      <div className="text-sm text-muted-foreground">Posts</div>
-                    </div>
-                  </div>
-                </div>
+<div className="w-full mt-6">
+  <div className="grid grid-cols-2 gap-8 py-4">
+    <div className="flex flex-col items-center justify-center">
+      <div className="font-semibold text-2xl">
+        {user._count.blogs.toLocaleString()}
+      </div>
+      <div className="text-sm text-muted-foreground">
+        Blogs
+      </div>
+    </div>
+
+    <div className="flex flex-col items-center justify-center">
+      <div className="font-semibold text-2xl">
+        {user._count.advices.toLocaleString()}
+      </div>
+      <div className="text-sm text-muted-foreground">
+        Advices
+      </div>
+    </div>
+  </div>
+</div>
 
                 {/* "FOLLOW & EDIT PROFILE" BUTTONS */}
-                {!currentUser ? (
-                  // <SignInButton mode="modal">
-                  <Button className="w-full mt-4">HELLO</Button>
-                ) : // </SignInButton>
-                isOwnProfile ? (
-                  <Button
-                    className="w-full mt-4"
-                    onClick={() => setShowEditDialog(true)}
-                  >
-                    <EditIcon className="size-4 mr-2" />
-                    Edit Profile
-                  </Button>
-                ) : (
-                  <Button> HELLO </Button>
-                  // <Button
-                  //   className="w-full mt-4"
-                  //   onClick={handleFollow}
-                  //   disabled={isUpdatingFollow}
-                  //   variant={isFollowing ? "outline" : "default"}
-                  // >
-                  //   {isFollowing ? "Unfollow" : "Follow"}
-                  // </Button>
-                )}
+                {!currentUser ? null : isOwnProfile ? (
+  <Button className="w-full mt-4" onClick={() => setShowEditDialog(true)}>
+    <EditIcon className="size-4 mr-2" />
+    Edit Profile
+  </Button>
+) : null}
+
 
                 {/* LOCATION & WEBSITE */}
                 <div className="w-full mt-6 space-y-2 text-sm">
@@ -221,20 +198,19 @@ function ProfilePageClient({
 
         <Tabs defaultValue="posts" className="w-full">
           <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-            <TabsTrigger
+            {/* <TabsTrigger
               value="posts"
               className="flex items-center gap-2 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary
                data-[state=active]:bg-transparent px-6 font-semibold"
             >
               <FileTextIcon className="size-4" />
               Posts
-            </TabsTrigger>
+            </TabsTrigger> */}
             <TabsTrigger
-              value="likes"
+              value="blogs"
               className="flex items-center gap-2 rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary
                data-[state=active]:bg-transparent px-6 font-semibold"
             >
-            
               <FileTextIcon className="size-4" />
               Blogs
             </TabsTrigger>
@@ -247,11 +223,9 @@ function ProfilePageClient({
               <FileTextIcon className="size-4" />
               Advices
             </TabsTrigger>
-
-            
           </TabsList>
 
-          <TabsContent value="posts" className="mt-6">
+          {/* <TabsContent value="posts" className="mt-6">
             <div className="space-y-6">
               {posts.length > 0 ? (
                 posts.map((post) => (
@@ -263,7 +237,7 @@ function ProfilePageClient({
                 </div>
               )}
             </div>
-          </TabsContent>
+          </TabsContent> */}
 
           <TabsContent value="blogs" className="mt-6">
             <div className="space-y-6">
@@ -297,7 +271,7 @@ function ProfilePageClient({
             </div>
           </TabsContent>
 
-          <TabsContent value="likes" className="mt-6">
+          {/* <TabsContent value="likes" className="mt-6">
             <div className="space-y-6">
               {likedPosts.length > 0 ? (
                 likedPosts.map((post) => (
@@ -309,7 +283,7 @@ function ProfilePageClient({
                 </div>
               )}
             </div>
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
 
         <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>

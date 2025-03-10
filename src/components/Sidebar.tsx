@@ -136,12 +136,7 @@ const Features = () => (
       title = "Projects"
       description = "Explore projects"
     />
-    <FeatureLink 
-      href="/events"
-      icon={Calendar}
-      title="Tech Events"
-      description="Discover upcoming events"
-    />
+    
     <FeatureLink 
       href="/advice"
       icon={HelpCircle}
