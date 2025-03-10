@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import Navbar from "@/components/Navbar";
 import Sidebar from "@/components/Sidebar";
 import { Toaster } from "react-hot-toast";
+import { Suspense } from 'react';
+import AuthLoading from '@/components/auth/loading';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -48,7 +50,11 @@ export default function RootLayout({
                     <div className="hidden lg:block lg:col-span-3">
                       <Sidebar />
                     </div>
-                    <div className="lg:col-span-9">{children}</div>
+                    <div className="lg:col-span-9">
+                      <Suspense fallback={<AuthLoading />}>
+                        {children}
+                      </Suspense>
+                    </div>
                   </div>
                 </div>
               </main>
